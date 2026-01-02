@@ -51,95 +51,118 @@ const skillCategories = [
   {
     title: 'Frontend Development',
     icon: <Code2 className="w-5 h-5" />,
-    skills: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'shadcn/ui']
+    skills: ['React', 'Next.js', 'TanStack Query', 'Zustand', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'shadcn/ui', 'Ant Design'],
   },
   {
     title: 'Backend Development',
     icon: <Server className="w-5 h-5" />,
-    skills: ['Node.js', 'Express', 'Python', 'FastAPI', 'REST APIs', 'GraphQL']
+    skills: ['Node.js', 'Express', 'REST APIs', 'Socket.io', 'Prisma ORM', 'TypeScript']
   },
   {
     title: 'Database & Storage',
     icon: <Database className="w-5 h-5" />,
-    skills: ['PostgreSQL', 'MongoDB', 'Prisma ORM', 'Redis', 'SQLite']
+    skills: ['PostgreSQL', 'MongoDB', 'Prisma ORM', 'Redis', 'my SQL', 'MongoDB Atlas']
   },
   {
     title: 'Cybersecurity',
     icon: <Shield className="w-5 h-5" />,
-    skills: ['OWASP Top 10', 'Security Auditing', 'Penetration Testing', 'Secure Coding', 'Cryptography Basics']
+    skills: ['OWASP Top 10', 'Security Auditing', 'Secure Coding', 'Cryptography Basics']
   },
   {
     title: 'DevOps & Tools',
     icon: <Terminal className="w-5 h-5" />,
-    skills: ['Git', 'Docker', 'CI/CD', 'Linux', 'AWS', 'Cloudflare']
+    skills: ['Git', 'GitHub', 'Docker', 'CI/CD', 'Linux basic', 'AWS basic', 'Cloudflare basic']
   },
-  {
-    title: 'Mobile & Responsive',
-    icon: <Smartphone className="w-5 h-5" />,
-    skills: ['React Native', 'Responsive Design', 'PWA', 'Mobile-First', 'Cross-Platform']
-  }
 ]
 
 // Projects data
 const projects = [
   {
-    title: 'Secure E-Commerce Platform',
-    description: 'Full-stack e-commerce solution with payment integration, inventory management, and advanced security features including CSRF protection and XSS prevention.',
-    tags: ['Next.js', 'TypeScript', 'Prisma', 'Stripe'],
-    github: '#',
-    demo: '#'
+    title: 'Online Educator',
+    description: 'A comprehensive full-stack platform built with React (TypeScript) and Node.js/Express that enables role-based online tutoring with class scheduling, real-time analytics, and permission management. Features include multi-role access control (Admin, Moderator, Teacher, Student), class scheduling with calendar views, interactive dashboards with charts, and a clean MongoDB database schema. Designed for educators and tutoring centers to manage classes, track student progress, and visualize performance metrics.',
+    tags: ['React', 'TypeScript', 'Node.js', 'Express', 'MongoDB', 'Prisma', 'Ant Design', 'TanStack Query', 'Zustand', 'Tailwind ', 'Framer Motion', 'Zod', 'multer', 'cloudinary', 'bcrypt', 'JWT', 'axios'],
+    github: 'https://github.com/M0hammad-yasin/Online-educator',
+    demo: 'https://online-educator.vercel.app/'
   },
   {
-    title: 'Cybersecurity Dashboard',
-    description: 'Real-time security monitoring dashboard that tracks system vulnerabilities, analyzes threats, and provides actionable insights for security teams.',
-    tags: ['React', 'Python', 'FastAPI', 'PostgreSQL'],
-    github: '#',
-    demo: '#'
+    title: 'Aero Agriculture',
+    description: 'AeroAgriculture is a comprehensive IoT-powered smart agriculture platform that combines modern web technologies with real-time sensor monitoring and automated hydroponic farming controls. It provides a responsive dashboard for monitoring plant growth, environmental conditions, and managing IoT hardware like LED lights, sprinklers, and pumps.',
+    tags: ['React', 'TypeScript', 'Node.js', 'Express', 'MongoDB', 'Chakra UI', 'WebSocket', 'IoT', 'NodeMCU', 'Recharts', 'Axios', 'Vite', 'Zustand', 'Framer Motion', 'Zod', 'multer', 'cloudinary'],
+    github: 'https://github.com/M0hammad-yasin/aero-agriculture',
+    demo: 'https://aero-agriculture.vercel.app/'
   },
   {
-    title: 'Task Management System',
-    description: 'Collaborative project management tool with real-time updates, team collaboration features, and comprehensive analytics dashboard.',
-    tags: ['Next.js', 'Socket.io', 'MongoDB', 'Tailwind'],
-    github: '#',
-    demo: '#'
+    title: 'College Network (Cisco Packet Tracer)',
+    description: 'Designed and simulated a secure college LAN using Cisco Packet Tracer, implementing VLANs, IP addressing, RIP routing, and centralized servers (DNS, FTP, Web). Improved network scalability, performance, and security through structured topology, inter-VLAN communication, and efficient routing protocols.',
+    tags: ['Cisco Packet Tracer', 'VLANs', 'IP addressing', 'RIP routing', 'centralized servers', 'DNS', 'FTP', 'Web', 'structured topology', 'inter-VLAN communication', 'routing protocols'],
+    github: 'https://drive.google.com/drive/folders/1L2Ip6V_dFVPGUCZGgkf-ncS1meo0LZzr?usp=sharing',
+    demo: 'https://drive.google.com/drive/folders/1L2Ip6V_dFVPGUCZGgkf-ncS1meo0LZzr?usp=sharing'
   },
   {
-    title: 'API Gateway & Rate Limiter',
-    description: 'High-performance API gateway with intelligent rate limiting, request caching, and comprehensive logging for microservices architecture.',
-    tags: ['Node.js', 'Redis', 'Docker', 'Express'],
-    github: '#',
-    demo: '#'
+    title: 'Communication Network of UIIT Department (Cisco Packet Tracer)',
+    description: 'Designed and simulated a secure departmental network using Cisco Packet Tracer, implementing VLAN-based segmentation, IP addressing, and inter-VLAN routing to ensure efficient and secure communication. Integrated core services including DNS, FTP, and Web servers, and validated network reliability, traffic flow, and security through structured testing.',
+    tags: ['Cisco Packet Tracer', 'VLANs', 'IP addressing', 'inter-VLAN routing', 'core services', 'DNS', 'FTP', 'Web', 'structured testing'],
+    github: 'https://drive.google.com/drive/folders/1ubK0USvR4px9_C6VS2htACS_kiiwkpgM?usp=sharing',
+    demo: 'https://drive.google.com/drive/folders/1ubK0USvR4px9_C6VS2htACS_kiiwkpgM?usp=sharing'
   },
   {
-    title: 'Secure Authentication Service',
-    description: 'JWT-based authentication system with 2FA support, password hashing, session management, and OAuth integration.',
+    title: 'ECWS Project',
+    description: 'This project is a modern e‑commerce web application built with Vite, React, and TypeScript, designed to provide a fast, scalable, and user‑friendly shopping experience. It includes features like product exploration and seller onboarding, making it easy for users to browse items and for merchants to become sellers.',
     tags: ['Next.js', 'NextAuth.js', 'Prisma', 'bcrypt'],
-    github: '#',
-    demo: '#'
+    github: 'https://github.com/M0hammad-yasin/ecws',
+    demo: 'https://ecws.vercel.app/'
   },
   {
-    title: 'Real-Time Chat Application',
-    description: 'End-to-end encrypted messaging platform with real-time communication, file sharing, and user presence indicators.',
-    tags: ['Socket.io', 'React', 'Node.js', 'Redis'],
-    github: '#',
-    demo: '#'
-  }
+    title: 'Dental Clinic Management System',
+    description: 'Developed a comprehensive dental clinic management system using the .NET framework to streamline patient records, appointment scheduling, and user administration. Implemented secure data storage and efficient database interactions to support reliable clinic operations and structured data management.',
+    tags: ['C# (.NET Framework)', 'MySQL', 'T-SQL', 'Visual Studio'],
+    github: 'https://github.com/M0hammad-yasin/Dental_clinic_system',
+    demo: 'https://github.com/M0hammad-yasin/Dental_clinic_system',
+  },
+  {
+    title: 'Eid Wish web App',
+    description: 'This project is an interactive Eid wishing web app that delivers a joyful, animated experience. It highlights the spiritual significance of Ramadan and Eid, combining heartfelt messages with smooth transitions and a modern UI. Built with dedication, it’s designed to spread positivity, reflection, and celebration during the festive season.',
+    tags: ['Next.js', 'Framer Motion', 'Tailwind CSS', 'ShadCN UI'],
+    github: 'https://github.com/M0hammad-yasin/eid-wish.git',
+    demo: 'https://eid-mubarek.vercel.app/',
+  },
+  // {
+  //   title: '',
+  //   description: '',
+  //   tags: [],
+  //   github: '',
+  //   demo: '',
+  // },
+  // {
+  //   title: '',
+  //   description: '',
+  //   tags: [],
+  //   github: '',
+  //   demo: '',
+  // }
 ]
 
 // Experience data
 const experiences = [
   {
     title: 'Full-Stack Developer',
-    company: 'Tech Startup',
+    company: 'Fiverr',
     period: '2023 - Present',
-    description: 'Developing scalable web applications with a focus on security and performance. Implemented CI/CD pipelines and improved system reliability.',
+    description: 'Worked on full-stack web development tasks assigned through professional referrals, fixing and maintaining MERN stack applications, resolving frontend and backend issues, debugging APIs, and improving application performance.',
+    icon: <Briefcase className="w-5 h-5" />
+  },
+  {
+    title: 'Final Year Project',
+    company: 'UIIT',
+    period: '2024-2025',
+    description: 'Developed an innovative and high-performing MERN stack web application as a Final Year Project, integrating MongoDB, Express.js, React, and Node.js. The project focused on scalable architecture, performance optimization, and secure data handling, and achieved <b>1st position</b> among 300+ students.',
     icon: <Briefcase className="w-5 h-5" />
   },
   {
     title: 'Junior Developer Intern',
-    company: 'Software Company',
-    period: '2022 - 2023',
-    description: 'Contributed to multiple projects, learned agile methodologies, and gained hands-on experience with full-stack development.',
+    company: 'DevSin',
+    period: '2025-2025',
+    description: 'Contributed to multiple projects and gained hands-on experience with full-stack development.',
     icon: <Briefcase className="w-5 h-5" />
   },
   {

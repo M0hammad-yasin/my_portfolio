@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Muhammad Yasin Developer",
+  title: "Muhammad Yasin | Hire me </>",
   description: "Hi, I am , Muhammad Yasin, a professional Developer with 1+ year of experience in web development.",
 };
 
