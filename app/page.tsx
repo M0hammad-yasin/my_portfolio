@@ -155,7 +155,7 @@ const experiences = [
     title: 'Final Year Project',
     company: 'UIIT',
     period: '2024-2025',
-    description: 'Developed an innovative and high-performing MERN stack web application as a Final Year Project, integrating MongoDB, Express.js, React, and Node.js. The project focused on scalable architecture, performance optimization, and secure data handling, and achieved <b>1st position</b> among 300+ students.',
+    description: 'Developed AeroAgriculture, an innovative and high-performing IoT-based smart hydroponic farming system using the MERN stack. The system enables real-time sensor monitoring (temperature, humidity, pH, EC, CO₂), automated control of lights, pumps, and sprinklers, data analytics, and secure user authentication. The project achieved 1st position among 300+ students.',
     icon: <Briefcase className="w-5 h-5" />
   },
   {
@@ -713,19 +713,19 @@ export default function Home() {
               className="mt-12 flex justify-center gap-6"
             >
               <Button variant="outline" size="lg" className="gap-2" asChild>
-                <a href="#">
+                <a href="https://github.com/M0hammad-yasin">
                   <Github className="w-5 h-5" />
                   GitHub
                 </a>
               </Button>
               <Button variant="outline" size="lg" className="gap-2" asChild>
-                <a href="#">
+                <a href="https://www.linkedin.com/in/muhammad-yasin-379059268/">
                   <Linkedin className="w-5 h-5" />
                   LinkedIn
                 </a>
               </Button>
               <Button variant="outline" size="lg" className="gap-2" asChild>
-                <a href="mailto:contact@example.com">
+                <a href="mailto:mohdysn111@gmail.com">
                   <Mail className="w-5 h-5" />
                   Email
                 </a>
@@ -748,17 +748,17 @@ export default function Home() {
             </p>
             <div className="flex gap-4">
               <Button variant="ghost" size="icon" asChild>
-                <a href="#" aria-label="GitHub">
+                <a href="https://github.com/M0hammad-yasin" aria-label="GitHub">
                   <Github className="w-4 h-4" />
                 </a>
               </Button>
               <Button variant="ghost" size="icon" asChild>
-                <a href="#" aria-label="LinkedIn">
+                <a href="https://www.linkedin.com/in/muhammad-yasin-379059268/" aria-label="LinkedIn">
                   <Linkedin className="w-4 h-4" />
                 </a>
               </Button>
               <Button variant="ghost" size="icon" asChild>
-                <a href="#" aria-label="Email">
+                <a href="mailto:mohdysn111@gmail.com" aria-label="Email">
                   <Mail className="w-4 h-4" />
                 </a>
               </Button>
