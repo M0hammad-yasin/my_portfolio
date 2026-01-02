@@ -354,7 +354,7 @@ export default function Home() {
                 transition={{ duration: 0.6, delay: 0.8 }}
                 className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
               >
-                Computer Science-Focused Full-Stack Developer with a Passion for
+                Computer Science-Focused <span className="text-primary font-semibold"> Full-Stack Developer</span>   with a Passion for
                 <span className="text-primary font-semibold"> Cybersecurity</span>
               </motion.p>
 
@@ -381,17 +381,17 @@ export default function Home() {
                 className="flex justify-center gap-6"
               >
                 <Button variant="ghost" size="icon" asChild>
-                  <a href="#" aria-label="GitHub">
+                  <a href="https://github.com/M0hammad-yasin" aria-label="GitHub">
                     <Github className="w-5 h-5" />
                   </a>
                 </Button>
                 <Button variant="ghost" size="icon" asChild>
-                  <a href="#" aria-label="LinkedIn">
+                  <a href="https://www.linkedin.com/in/muhammad-yasin-379059268/" aria-label="LinkedIn">
                     <Linkedin className="w-5 h-5" />
                   </a>
                 </Button>
                 <Button variant="ghost" size="icon" asChild>
-                  <a href="#" aria-label="Email">
+                  <a href="mailto:mohdysn111@gmail.com" aria-label="Email">
                     <Mail className="w-5 h-5" />
                   </a>
                 </Button>
