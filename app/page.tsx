@@ -1,771 +1,485 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useTheme } from 'next-themes'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { useTheme } from 'next-themes'
-import {
-  Github,
-  Linkedin,
-  Mail,
-  ExternalLink,
-  Terminal,
-  Code2,
-  Database,
-  Shield,
-  Server,
-  Smartphone,
-  Palette,
-  Cpu,
-  Zap,
-  ChevronDown,
-  Menu,
-  X,
-  Send,
-  GraduationCap,
-  Briefcase,
-} from 'lucide-react'
-import { toast } from "sonner"
+import { Github, Linkedin, Mail, ArrowUpRight, Braces, Moon, Sun, Menu, X, Send, Lock } from 'lucide-react'
 
-// Type-safe animation variants
-const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, ease: 'easeOut' }
+/* ------------------------------------------------------------------ */
+/* Data                                                                */
+/* ------------------------------------------------------------------ */
+
+type Project = {
+  name: string
+  type: string
+  place: string
+  url: string
+  domain: string
+  summary: string
+  built: string[]
+  stack: string[]
+  pages: string[]
+  hue: number // card colour in the browser mock
+  image?: string // optional: put a screenshot in /public and set e.g. '/ufc.png'
+  structure: string
 }
 
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-}
-
-// Skill categories
-const skillCategories = [
+const projects: Project[] = [
   {
-    title: 'Frontend Development',
-    icon: <Code2 className="w-5 h-5" />,
-    skills: ['React', 'Next.js', 'TanStack Query', 'Zustand', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'shadcn/ui', 'Ant Design'],
+    name: 'United Five Construction',
+    type: 'General contractor website',
+    place: 'New York City & New Jersey',
+    url: 'https://unitedfiveconstruct.com/',
+    domain: 'unitedfiveconstruct.com',
+    summary:
+      'Marketing site for a licensed general contractor. It explains four trades clearly, shows licences and certifications, and sends every visitor toward a quote request.',
+    built: [
+      'Service pages for concrete, facade, asphalt, and framing and drywall',
+      'BIM and portfolio pages, plus a quote form with a service selector',
+      'Licence and certificate section to build trust with commercial clients',
+    ],
+    stack: ['PHP', 'HTML', 'CSS', 'JavaScript', 'SEO'],
+    pages: ['Home', 'About', 'Specializations', 'BIM', 'Portfolio', 'Contact'],
+    hue: 250,
+    structure: `unitedfiveconstruct.com/
+├── index.php
+├── about-us.php
+├── specializations.php
+├── bim.php
+├── portfolio.php
+├── contact.php
+├── includes/            shared header, footer, quote form
+└── assets/
+    └── img/
+        ├── footer-logo/        licence and certificate badges
+        ├── specializations/    concrete, facade, asphalt, framing
+        └── projects/           portfolio photography`,
   },
   {
-    title: 'Backend Development',
-    icon: <Server className="w-5 h-5" />,
-    skills: ['Node.js', 'Express', 'REST APIs', 'Socket.io', 'Prisma ORM', 'TypeScript']
+    name: 'Fraser Facility Services',
+    type: 'Commercial cleaning and facility services',
+    place: 'Lower Mainland and Fraser Valley, BC',
+    url: 'https://fraserfacilityservices.ca/',
+    domain: 'fraserfacilityservices.ca',
+    summary:
+      'A full multi-page site for a family-owned facility company: six service lines, 17 service areas, a blog and FAQ for search traffic, and a free-quote funnel.',
+    built: [
+      'Six service pages, from janitorial and floor care to snow and ice',
+      'Blog with article pages to bring in search visitors',
+      'Credentials, service-area list, FAQ and a downloadable brochure',
+    ],
+    stack: ['PHP', 'Bootstrap', 'JavaScript', 'SEO'],
+    pages: ['Home', 'About', 'Services', 'Our Work', 'Blog', 'FAQ', 'Contact'],
+    hue: 170,
+    structure: `fraserfacilityservices.ca/
+├── index.php
+├── about.php
+├── service.php
+├── our-work.php
+├── blogs.php            blog list
+├── blog.php             single article (by slug)
+├── faq.php
+├── contact.php
+├── includes/            header, footer, quote CTA
+├── documents/           brochure (PDF)
+└── assets/
+    └── img/
+        ├── home/
+        ├── about_us/
+        ├── services/
+        └── blog/`,
   },
   {
-    title: 'Database & Storage',
-    icon: <Database className="w-5 h-5" />,
-    skills: ['PostgreSQL', 'MongoDB', 'Prisma ORM', 'Redis', 'my SQL', 'MongoDB Atlas']
+    name: 'Black Cab',
+    type: 'Taxi company website (Norwegian)',
+    place: 'Oslo, Norway',
+    url: 'https://blackcab.online/index.php',
+    domain: 'blackcab.online',
+    summary:
+      'A Norwegian-language site for an Oslo taxi company. It covers pricing, recruiting new licence holders and licence courses, with a phone number always one tap away.',
+    built: [
+      'Pricing, licence-holder and licence-course pages in Norwegian',
+      'Customer service and contact page with opening hours',
+      'Mobile-first layout with click-to-call',
+    ],
+    stack: ['PHP', 'HTML', 'CSS', 'JavaScript'],
+    pages: ['Hjem', 'Priser', 'Bli løyvehaver', 'Løyvekurs', 'Kundeservice'],
+    hue: 30,
+    structure: `blackcab.online/
+├── index.php
+├── priser.php
+├── bli_loyvehaver.php
+├── loyvekurs_for_drosje.php
+├── contact.php
+├── includes/            header, footer
+└── img/                 logo, icons, photography`,
   },
   {
-    title: 'Cybersecurity',
-    icon: <Shield className="w-5 h-5" />,
-    skills: ['OWASP Top 10', 'Security Auditing', 'Secure Coding', 'Cryptography Basics']
-  },
-  {
-    title: 'DevOps & Tools',
-    icon: <Terminal className="w-5 h-5" />,
-    skills: ['Git', 'GitHub', 'Docker', 'CI/CD', 'Linux basic', 'AWS basic', 'Cloudflare basic']
+    name: 'Sasko NorthEast',
+    type: 'Construction management company website',
+    place: 'Group site: Sasko, Tristate CM and UFC',
+    url: 'https://saskonortheast.com/coming-soon',
+    domain: 'saskonortheast.com',
+    summary:
+      'A large multi-page PHP site for a construction management group. It covers the full project lifecycle, from planning to closeout, and shows past work in project galleries. The public link currently opens the coming-soon page.',
+    built: [
+      'Service pages for pre-construction planning, cost estimation, design coordination, scheduling, oversight and closeout',
+      'Project galleries for residential, commercial, government and city contracts, plus an on-going projects page',
+      'BIM section with video, team, news and FAQ pages, and a contact form handled by PHP',
+    ],
+    stack: ['PHP', 'HTML', 'CSS', 'JavaScript'],
+    pages: ['Home', 'Our Firm', 'Services', 'Portfolio', 'Team', 'News', 'Contact'],
+    hue: 310,
+    structure: `saskonortheast.com/
+├── index.php
+├── our-firm.php  our-expertise.php  team.php
+├── sasko.php  tristate.php  tristateCM.php  ufc.php      group entities
+├── services.php  build.php  design.php  finance.php  bim.php  concrete.php
+│   ├── pre-construction-planning.php
+│   ├── cost-estimation-procurement.php
+│   ├── design-phase-coordination.php
+│   ├── schedule-management.php
+│   ├── construction-oversight.php
+│   └── closeout-turnover.php
+├── portfolio.php  portfolio-section.php  on-going-project.php
+│   ├── residential-gallery.php
+│   ├── commercial-gallery.php
+│   ├── government-gallery.php
+│   └── city-contracts-gallery.php
+├── news.html  news-details.html  faq.html  about.html
+├── contact.php  contact-us.php  send.php                 contact form handler
+├── coming-soon.php  coming-soon-1..4.php                 launch pages
+├── head.php  header.php  footer.php  preloader.php       shared partials
+├── .htaccess  .gitignore  style.css
+└── assets/
+    ├── css/    fonts/    js/
+    ├── img/    WebP images
+    └── video/  BIM section video and poster`,
   },
 ]
 
-// Projects data
-const projects = [
-  {
-    title: 'Online Educator',
-    description: 'A comprehensive full-stack platform built with React (TypeScript) and Node.js/Express that enables role-based online tutoring with class scheduling, real-time analytics, and permission management. Features include multi-role access control (Admin, Moderator, Teacher, Student), class scheduling with calendar views, interactive dashboards with charts, and a clean MongoDB database schema. Designed for educators and tutoring centers to manage classes, track student progress, and visualize performance metrics.',
-    tags: ['React', 'TypeScript', 'Node.js', 'Express', 'MongoDB', 'Prisma', 'Ant Design', 'TanStack Query', 'Zustand', 'Tailwind ', 'Framer Motion', 'Zod', 'multer', 'cloudinary', 'bcrypt', 'JWT', 'axios'],
-    github: 'https://github.com/M0hammad-yasin/Online-educator',
-    demo: 'https://online-educator.vercel.app/'
-  },
-  {
-    title: 'Aero Agriculture',
-    description: 'AeroAgriculture is a comprehensive IoT-powered smart agriculture platform that combines modern web technologies with real-time sensor monitoring and automated hydroponic farming controls. It provides a responsive dashboard for monitoring plant growth, environmental conditions, and managing IoT hardware like LED lights, sprinklers, and pumps.',
-    tags: ['React', 'TypeScript', 'Node.js', 'Express', 'MongoDB', 'Chakra UI', 'WebSocket', 'IoT', 'NodeMCU', 'Recharts', 'Axios', 'Vite', 'Zustand', 'Framer Motion', 'Zod', 'multer', 'cloudinary'],
-    github: 'https://github.com/M0hammad-yasin/aero-agriculture',
-    demo: 'https://aero-agriculture.vercel.app/'
-  },
-  {
-    title: 'College Network (Cisco Packet Tracer)',
-    description: 'Designed and simulated a secure college LAN using Cisco Packet Tracer, implementing VLANs, IP addressing, RIP routing, and centralized servers (DNS, FTP, Web). Improved network scalability, performance, and security through structured topology, inter-VLAN communication, and efficient routing protocols.',
-    tags: ['Cisco Packet Tracer', 'VLANs', 'IP addressing', 'RIP routing', 'centralized servers', 'DNS', 'FTP', 'Web', 'structured topology', 'inter-VLAN communication', 'routing protocols'],
-    github: 'https://drive.google.com/drive/folders/1L2Ip6V_dFVPGUCZGgkf-ncS1meo0LZzr?usp=sharing',
-    demo: 'https://drive.google.com/drive/folders/1L2Ip6V_dFVPGUCZGgkf-ncS1meo0LZzr?usp=sharing'
-  },
-  {
-    title: 'Communication Network of UIIT Department (Cisco Packet Tracer)',
-    description: 'Designed and simulated a secure departmental network using Cisco Packet Tracer, implementing VLAN-based segmentation, IP addressing, and inter-VLAN routing to ensure efficient and secure communication. Integrated core services including DNS, FTP, and Web servers, and validated network reliability, traffic flow, and security through structured testing.',
-    tags: ['Cisco Packet Tracer', 'VLANs', 'IP addressing', 'inter-VLAN routing', 'core services', 'DNS', 'FTP', 'Web', 'structured testing'],
-    github: 'https://drive.google.com/drive/folders/1ubK0USvR4px9_C6VS2htACS_kiiwkpgM?usp=sharing',
-    demo: 'https://drive.google.com/drive/folders/1ubK0USvR4px9_C6VS2htACS_kiiwkpgM?usp=sharing'
-  },
-  {
-    title: 'ECWS Project',
-    description: 'This project is a modern e‑commerce web application built with Vite, React, and TypeScript, designed to provide a fast, scalable, and user‑friendly shopping experience. It includes features like product exploration and seller onboarding, making it easy for users to browse items and for merchants to become sellers.',
-    tags: ['Next.js', 'NextAuth.js', 'Prisma', 'bcrypt'],
-    github: 'https://github.com/M0hammad-yasin/ecws',
-    demo: 'https://ecws.vercel.app/'
-  },
-  {
-    title: 'Dental Clinic Management System',
-    description: 'Developed a comprehensive dental clinic management system using the .NET framework to streamline patient records, appointment scheduling, and user administration. Implemented secure data storage and efficient database interactions to support reliable clinic operations and structured data management.',
-    tags: ['C# (.NET Framework)', 'MySQL', 'T-SQL', 'Visual Studio'],
-    github: 'https://github.com/M0hammad-yasin/Dental_clinic_system',
-    demo: 'https://github.com/M0hammad-yasin/Dental_clinic_system',
-  },
-  {
-    title: 'Eid Wish web App',
-    description: 'This project is an interactive Eid wishing web app that delivers a joyful, animated experience. It highlights the spiritual significance of Ramadan and Eid, combining heartfelt messages with smooth transitions and a modern UI. Built with dedication, it’s designed to spread positivity, reflection, and celebration during the festive season.',
-    tags: ['Next.js', 'Framer Motion', 'Tailwind CSS', 'ShadCN UI'],
-    github: 'https://github.com/M0hammad-yasin/eid-wish.git',
-    demo: 'https://eid-mubarek.vercel.app/',
-  },
-  // {
-  //   title: '',
-  //   description: '',
-  //   tags: [],
-  //   github: '',
-  //   demo: '',
-  // },
-  // {
-  //   title: '',
-  //   description: '',
-  //   tags: [],
-  //   github: '',
-  //   demo: '',
-  // }
+const moreProjects = [
+  { title: 'Online Educator', note: 'Role-based tutoring platform with class scheduling and dashboards', tags: 'React, Node.js, MongoDB', github: 'https://github.com/M0hammad-yasin/Online-educator', demo: 'https://online-educator.vercel.app/' },
+  { title: 'Aero Agriculture', note: 'IoT hydroponic farming dashboard. 1st place among 300+ final-year projects', tags: 'React, Node.js, WebSocket, IoT', github: 'https://github.com/M0hammad-yasin/aero-agriculture', demo: 'https://aero-agriculture.vercel.app/' },
+  { title: 'ECWS', note: 'E-commerce app with product browsing and seller onboarding', tags: 'Next.js, Prisma, NextAuth', github: 'https://github.com/M0hammad-yasin/ecws', demo: 'https://ecws.vercel.app/' },
+  { title: 'Dental Clinic System', note: 'Patient records and appointment scheduling', tags: 'C#, .NET, MySQL', github: 'https://github.com/M0hammad-yasin/Dental_clinic_system', demo: 'https://github.com/M0hammad-yasin/Dental_clinic_system' },
+  { title: 'Eid Wish', note: 'Animated Eid greeting web app', tags: 'Next.js, Framer Motion', github: 'https://github.com/M0hammad-yasin/eid-wish.git', demo: 'https://eid-mubarek.vercel.app/' },
 ]
 
-// Experience data
+const skills = [
+  ['Frontend', 'React, Next.js, TypeScript, Tailwind CSS, Bootstrap, Framer Motion, shadcn/ui'],
+  ['Backend', 'PHP, Node.js, Express, REST APIs, Socket.io, Prisma'],
+  ['Databases', 'MySQL, MariaDB, PostgreSQL, MongoDB, Redis'],
+  ['Security', 'OWASP Top 10, security auditing, secure coding'],
+  ['Tools', 'Git, GitHub, Docker, CI/CD, Linux, AWS and Cloudflare basics'],
+]
+
 const experiences = [
-  {
-    title: 'Full-Stack Developer',
-    company: 'Fiverr',
-    period: '2023 - Present',
-    description: 'Worked on full-stack web development tasks assigned through professional referrals, fixing and maintaining MERN stack applications, resolving frontend and backend issues, debugging APIs, and improving application performance.',
-    icon: <Briefcase className="w-5 h-5" />
-  },
-  {
-    title: 'Final Year Project',
-    company: 'UIIT',
-    period: '2024-2025',
-    description: 'Developed AeroAgriculture, an innovative and high-performing IoT-based smart hydroponic farming system using the MERN stack. The system enables real-time sensor monitoring (temperature, humidity, pH, EC, CO₂), automated control of lights, pumps, and sprinklers, data analytics, and secure user authentication. The project achieved 1st position among 300+ students.',
-    icon: <Briefcase className="w-5 h-5" />
-  },
-  {
-    title: 'Junior Developer Intern',
-    company: 'DevSin',
-    period: '2025-2025',
-    description: 'Contributed to multiple projects and gained hands-on experience with full-stack development.',
-    icon: <Briefcase className="w-5 h-5" />
-  },
-  {
-    title: 'BS Computer Science',
-    company: 'University',
-    period: '2020 - 2024',
-    description: 'Focus on software engineering, algorithms, data structures, and cybersecurity. Participated in hackathons and coding competitions.',
-    icon: <GraduationCap className="w-5 h-5" />
-  }
+  // TODO: replace the company and description with your real details for these two periods
+  { period: 'Apr 2026 - Present', title: 'Web Developer', place: 'Client projects', text: 'Design, build and maintain websites for clients in New York, Vancouver and Oslo, from first layout to deployment.' },
+  { period: 'Nov 2025 - Apr 2026', title: 'Web Developer', place: 'Client projects', text: 'Started professional web development, building PHP and frontend sites for businesses.' },
+  { period: '2025', title: 'Junior Developer Intern', place: 'DevSin', text: 'Contributed to multiple projects and gained hands-on full-stack experience.' },
+  { period: '2023 - Present', title: 'Full-Stack Developer', place: 'Fiverr', text: 'Fixed and maintained MERN applications, debugged APIs and improved performance.' },
+  { period: '2020 - 2024', title: 'BS Computer Science', place: 'UIIT', text: 'Software engineering, algorithms and cybersecurity. Final-year IoT project placed 1st among 300+ students.' },
 ]
 
-export default function Home() {
-  const [mounted, setMounted] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState('hero')
-  const { theme, setTheme } = useTheme()
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+/* ------------------------------------------------------------------ */
+/* Pieces                                                              */
+/* ------------------------------------------------------------------ */
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['hero', 'about', 'skills', 'projects', 'experience', 'contact']
-      const scrollPosition = window.scrollY + 100
+function ExperienceBar() {
+  return (
+    <div className="mt-14 max-w-xl" aria-label="One year of professional experience">
+      <div className="mb-2 flex justify-between text-sm font-medium">
+        <span>1+ year building for real clients</span>
+        <span className="text-muted-foreground">Nov 2025 to now</span>
+      </div>
+      <div className="flex h-9 gap-1.5">
+        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.8, delay: 0.5, ease: 'easeOut' }} style={{ originX: 0, flex: 5 }} className="rounded-md bg-primary/25" />
+        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.8, delay: 0.9, ease: 'easeOut' }} style={{ originX: 0, flex: 6.5 }} className="rounded-md bg-primary" />
+      </div>
+      <div className="mt-1.5 flex gap-1.5 text-xs text-muted-foreground">
+        <span style={{ flex: 5 }}>Nov 2025</span>
+        <span style={{ flex: 6.5 }} className="flex justify-between"><span>Apr 2026</span><span>Now</span></span>
+      </div>
+    </div>
+  )
+}
 
-      for (const section of sections) {
-        const element = document.getElementById(section)
-        if (element) {
-          const { offsetTop, offsetHeight } = element
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section)
-            break
-          }
-        }
-      }
-    }
+function BrowserMock({ p }: { p: Project }) {
+  return (
+    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+      <div className="flex items-center gap-3 border-b bg-muted/60 px-4 py-2.5">
+        <div className="flex gap-1.5" aria-hidden="true">
+          <span className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
+          <span className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
+          <span className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
+        </div>
+        <div className="flex-1 truncate rounded-md bg-background px-3 py-1 font-mono text-xs text-muted-foreground">{p.domain}</div>
+      </div>
+      {p.image ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={p.image} alt={`${p.name} website screenshot`} className="aspect-[16/10] w-full object-cover object-top" />
+      ) : (
+        <div
+          className="flex aspect-[16/10] flex-col justify-between p-6 text-white sm:p-8"
+          style={{ background: `linear-gradient(135deg, oklch(0.38 0.14 ${p.hue}), oklch(0.24 0.09 ${p.hue + 30}))` }}
+        >
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/70">{p.pages.map((x) => <span key={x}>{x}</span>)}</div>
+          <div>
+            <p className="font-display text-3xl font-extrabold leading-none sm:text-4xl">{p.name}</p>
+            <p className="mt-2 text-sm text-white/75">{p.place}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+function ProjectRow({ p, index }: { p: Project; index: number }) {
+  const [open, setOpen] = useState(false)
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-      setIsMobileMenuOpen(false)
-    }
-  }
-
-  const handleContactSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    toast("Message sent!", {
-      description: "Thank you for reaching out. I'll get back to you soon.",
+  const showCode = () => {
+    toast('Project code is private', {
+      description: "Due to security reasons and client consent, I can't show this project's code. Here is its structure instead.",
+      icon: <Lock className="h-4 w-4" />,
     })
-    e.currentTarget.reset()
-  }
-
-  if (!mounted) {
-    return null
+    setOpen((v) => !v)
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center gap-2 cursor-pointer"
-              onClick={() => scrollToSection('hero')}
-            >
-              <Code2 className="w-6 h-6 text-primary" />
-              <span className="font-bold text-lg">MY</span>
-            </motion.div>
+    <article className="border-t py-14 first:border-t-0 first:pt-0">
+      <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-12">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.5 }}
+          className={`lg:col-span-7 ${index % 2 ? 'lg:order-2' : ''}`}
+        >
+          <BrowserMock p={p} />
+        </motion.div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
-              {['About', 'Skills', 'Projects', 'Experience', 'Contact'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => scrollToSection(item.toLowerCase())}
-                  className={`text-sm font-medium transition-colors hover:text-primary ${activeSection === item.toLowerCase() ? 'text-primary' : 'text-muted-foreground'
-                    }`}
-                >
-                  {item}
-                </button>
-              ))}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              >
-                <Zap className="w-5 h-5" />
-              </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              >
-                <Zap className="w-5 h-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </Button>
-            </div>
+        <div className="lg:col-span-5">
+          <p className="text-sm font-medium text-primary">{p.type}</p>
+          <h3 className="font-display mt-1 text-3xl font-extrabold tracking-tight">{p.name}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">{p.place}</p>
+          <p className="mt-4 text-muted-foreground">{p.summary}</p>
+          <ul className="mt-4 space-y-1.5 text-sm">
+            {p.built.map((b) => (
+              <li key={b} className="flex gap-2"><span className="mt-2 h-1 w-3 shrink-0 rounded-full bg-primary" aria-hidden="true" />{b}</li>
+            ))}
+          </ul>
+          <div className="mt-4 flex flex-wrap gap-1.5">{p.stack.map((s) => <Badge key={s} variant="secondary">{s}</Badge>)}</div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button asChild>
+              <a href={p.url} target="_blank" rel="noopener noreferrer">Visit live site <ArrowUpRight className="ml-1 h-4 w-4" /></a>
+            </Button>
+            <Button variant="outline" onClick={showCode} aria-expanded={open}>
+              <Braces className="mr-1 h-4 w-4" /> Project code
+            </Button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
+      <AnimatePresence initial={false}>
+        {open && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:hidden border-t border-border bg-background"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
           >
-            <div className="container mx-auto px-4 py-4">
-              {['About', 'Skills', 'Projects', 'Experience', 'Contact'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => scrollToSection(item.toLowerCase())}
-                  className="block w-full text-left py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-                >
-                  {item}
-                </button>
-              ))}
+            <div className="mt-8 rounded-xl border bg-card p-5 sm:p-6">
+              <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
+                <Lock className="h-4 w-4" /> Source code is private. Simplified project structure only.
+              </div>
+              <pre className="overflow-x-auto font-mono text-[13px] leading-6">{p.structure}</pre>
             </div>
           </motion.div>
         )}
-      </nav>
+      </AnimatePresence>
+    </article>
+  )
+}
 
-      {/* Main Content */}
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section id="hero" className="min-h-screen flex items-center justify-center pt-16 px-4">
-          <div className="container mx-auto max-w-4xl">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="text-center"
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="mb-6 inline-block"
-              >
-                <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                  <Code2 className="w-16 h-16 text-primary" />
+/* ------------------------------------------------------------------ */
+/* Page                                                                */
+/* ------------------------------------------------------------------ */
+
+const links = [['Work', 'work'], ['Services', 'services'], ['Skills', 'skills'], ['Experience', 'experience'], ['Contact', 'contact']]
+
+export default function Home() {
+  const { resolvedTheme, setTheme } = useTheme()
+  const [menu, setMenu] = useState(false)
+
+  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const f = e.currentTarget
+    const d = new FormData(f)
+    const body = `${d.get('message')}\n\nFrom: ${d.get('name')} (${d.get('email')})`
+    window.location.href = `mailto:mohdysn111@gmail.com?subject=${encodeURIComponent(String(d.get('subject')))}&body=${encodeURIComponent(body)}`
+    toast('Opening your email app', { description: "Send the drafted message and I'll reply soon." })
+    f.reset()
+  }
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b bg-background/85 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+          <a href="#top" className="font-display text-lg font-extrabold tracking-tight">Muhammad Yasin</a>
+          <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
+            {links.map(([l, id]) => <a key={id} href={`#${id}`} className="text-sm text-muted-foreground transition-colors hover:text-foreground">{l}</a>)}
+            <Button size="sm" asChild><a href="#contact">Hire me</a></Button>
+            <Button variant="ghost" size="icon" aria-label="Toggle theme" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
+              <Sun className="hidden h-5 w-5 dark:block" /><Moon className="h-5 w-5 dark:hidden" />
+            </Button>
+          </nav>
+          <div className="flex items-center gap-1 md:hidden">
+            <Button variant="ghost" size="icon" aria-label="Toggle theme" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
+              <Sun className="hidden h-5 w-5 dark:block" /><Moon className="h-5 w-5 dark:hidden" />
+            </Button>
+            <Button variant="ghost" size="icon" aria-label="Menu" onClick={() => setMenu(!menu)}>{menu ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</Button>
+          </div>
+        </div>
+        {menu && (
+          <div className="border-t bg-background px-5 py-3 md:hidden">
+            {links.map(([l, id]) => <a key={id} href={`#${id}`} onClick={() => setMenu(false)} className="block py-2 text-sm text-muted-foreground">{l}</a>)}
+          </div>
+        )}
+      </header>
+
+      <main id="top">
+        {/* Hero */}
+        <section className="mx-auto max-w-6xl px-5 pb-24 pt-16 sm:pt-24">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <div className="inline-flex items-center gap-2 rounded-full border bg-card px-4 py-1.5 text-sm font-medium">
+              <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden="true" /> Available for new client projects
+            </div>
+            <h1 className="font-display mt-6 max-w-4xl text-5xl font-extrabold leading-[0.98] tracking-tight sm:text-7xl">
+              Websites that help service businesses win clients.
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+              I’m a full-stack developer. My live client sites include a New York general contractor, a Vancouver facility-services company and an Oslo taxi firm.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button size="lg" asChild><a href="#contact"><Mail className="mr-2 h-4 w-4" />Start your project</a></Button>
+              <Button size="lg" variant="outline" asChild><a href="#work">See live projects</a></Button>
+            </div>
+            <ExperienceBar />
+          </motion.div>
+        </section>
+
+        {/* Work */}
+        <section id="work" className="border-t bg-muted/40 py-24">
+          <div className="mx-auto max-w-6xl px-5">
+            <h2 className="font-display mb-4 max-w-2xl text-4xl font-extrabold tracking-tight sm:text-5xl">Client projects, live on the web</h2>
+            <p className="mb-14 max-w-2xl text-muted-foreground">Every site below is in use by a real business. Client code is private, so the project code button shows each site’s structure instead.</p>
+            {projects.map((p, i) => <ProjectRow key={p.name} p={p} index={i} />)}
+          </div>
+        </section>
+
+        {/* Services */}
+        <section id="services" className="mx-auto max-w-6xl px-5 py-24">
+          <h2 className="font-display mb-12 max-w-2xl text-4xl font-extrabold tracking-tight sm:text-5xl">What I can build for you</h2>
+          <div className="grid gap-10 md:grid-cols-3">
+            {[
+              ['Business websites', 'Clear, fast sites that explain what you do, build trust and make the next step obvious: call, quote or book.'],
+              ['Web apps and dashboards', 'Custom tools for scheduling, orders, analytics and admin work, built with React, Node and a real database.'],
+              ['Secure by default', 'Input validation, authentication and safe data handling are part of every build, not an extra at the end.'],
+            ].map(([t, d]) => (
+              <div key={t} className="border-t-2 border-primary pt-5">
+                <h3 className="font-display text-2xl font-bold">{t}</h3>
+                <p className="mt-2 text-muted-foreground">{d}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Skills */}
+        <section id="skills" className="border-t bg-muted/40 py-24">
+          <div className="mx-auto max-w-6xl px-5">
+            <h2 className="font-display mb-10 text-4xl font-extrabold tracking-tight sm:text-5xl">Skills</h2>
+            <dl className="divide-y border-y">
+              {skills.map(([k, v]) => (
+                <div key={k} className="grid gap-1 py-4 sm:grid-cols-[200px_1fr]">
+                  <dt className="font-semibold">{k}</dt><dd className="text-muted-foreground">{v}</dd>
                 </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                <Badge variant="outline" className="mb-4">
-                  <Shield className="w-3 h-3 mr-1" />
-                  Security-Focused Developer
-                </Badge>
-              </motion.div>
-
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6"
-              >
-                <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                  Muhammad Yasin
-                </span>
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-                className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
-              >
-                Computer Science-Focused <span className="text-primary font-semibold"> Full-Stack Developer</span>   with a Passion for
-                <span className="text-primary font-semibold"> Cybersecurity</span>
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1 }}
-                className="flex flex-wrap gap-4 justify-center mb-12"
-              >
-                <Button size="lg" onClick={() => scrollToSection('projects')}>
-                  View Projects
-                  <ChevronDown className="w-4 h-4 ml-2" />
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => scrollToSection('contact')}>
-                  Get In Touch
-                  <Mail className="w-4 h-4 ml-2" />
-                </Button>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 1.2 }}
-                className="flex justify-center gap-6"
-              >
-                <Button variant="ghost" size="icon" asChild>
-                  <a href="https://github.com/M0hammad-yasin" aria-label="GitHub">
-                    <Github className="w-5 h-5" />
-                  </a>
-                </Button>
-                <Button variant="ghost" size="icon" asChild>
-                  <a href="https://www.linkedin.com/in/muhammad-yasin-379059268/" aria-label="LinkedIn">
-                    <Linkedin className="w-5 h-5" />
-                  </a>
-                </Button>
-                <Button variant="ghost" size="icon" asChild>
-                  <a href="mailto:mohdysn111@gmail.com" aria-label="Email">
-                    <Mail className="w-5 h-5" />
-                  </a>
-                </Button>
-              </motion.div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* About Section */}
-        <section id="about" className="py-20 px-4">
-          <div className="container mx-auto max-w-5xl">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-16"
-            >
-              <Badge variant="outline" className="mb-4">About Me</Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Building Secure & Scalable Solutions</h2>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="grid md:grid-cols-2 gap-8"
-            >
-              <Card className="border-2">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Code2 className="w-5 h-5 text-primary" />
-                    Who I Am
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 text-muted-foreground">
-                  <p>
-                    I'm a passionate Full-Stack Developer with a strong foundation in Computer Science and a keen interest in cybersecurity. I specialize in building secure, scalable, and user-friendly web applications using modern technologies.
-                  </p>
-                  <p>
-                    With experience in both frontend and backend development, I bring ideas to life from concept to deployment. My cybersecurity background ensures that every application I build is designed with security best practices from the ground up.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-2">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-primary" />
-                    My Approach
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 text-muted-foreground">
-                  <p>
-                    I believe in writing clean, maintainable code that follows industry best practices. Security is always a top priority in my development process, not an afterthought.
-                  </p>
-                  <p>
-                    I'm constantly learning new technologies and staying updated with the latest security threats and mitigation strategies. This allows me to build applications that are not only feature-rich but also resilient against cyber threats.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Skills Section */}
-        <section id="skills" className="py-20 px-4 bg-muted/30">
-          <div className="container mx-auto max-w-6xl">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-16"
-            >
-              <Badge variant="outline" className="mb-4">Skills & Expertise</Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Technical Proficiency</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Comprehensive skill set spanning full-stack development and cybersecurity
-              </p>
-            </motion.div>
-
-            <motion.div
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {skillCategories.map((category, index) => (
-                <motion.div
-                  key={category.title}
-                  variants={fadeInUp}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Card className="h-full border-2 hover:border-primary/50 transition-all hover:shadow-lg">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-lg">
-                        <span className="text-primary">{category.icon}</span>
-                        {category.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-2">
-                        {category.skills.map((skill) => (
-                          <Badge key={skill} variant="secondary">
-                            {skill}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
               ))}
-            </motion.div>
+            </dl>
           </div>
         </section>
 
-        {/* Projects Section */}
-        <section id="projects" className="py-20 px-4">
-          <div className="container mx-auto max-w-6xl">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-16"
-            >
-              <Badge variant="outline" className="mb-4">Portfolio</Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Featured Projects</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                A showcase of my recent work in full-stack development and security
-              </p>
-            </motion.div>
+        {/* More projects */}
+        <section className="mx-auto max-w-6xl px-5 py-24">
+          <h2 className="font-display mb-10 text-4xl font-extrabold tracking-tight sm:text-5xl">Other projects</h2>
+          <ul className="divide-y border-y">
+            {moreProjects.map((m) => (
+              <li key={m.title} className="grid gap-3 py-5 md:grid-cols-[1fr_auto] md:items-center">
+                <div>
+                  <h3 className="font-display text-xl font-bold">{m.title}</h3>
+                  <p className="text-muted-foreground">{m.note}</p>
+                  <p className="mt-1 font-mono text-xs text-muted-foreground">{m.tags}</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" asChild><a href={m.github} target="_blank" rel="noopener noreferrer"><Github className="mr-1 h-4 w-4" />Code</a></Button>
+                  <Button variant="outline" size="sm" asChild><a href={m.demo} target="_blank" rel="noopener noreferrer">Demo <ArrowUpRight className="ml-1 h-4 w-4" /></a></Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-            <motion.div
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {projects.map((project, index) => (
-                <motion.div
-                  key={project.title}
-                  variants={fadeInUp}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Card className="h-full border-2 hover:border-primary/50 transition-all hover:shadow-lg flex flex-col">
-                    <CardHeader>
-                      <CardTitle className="text-xl">{project.title}</CardTitle>
-                      <CardDescription className="text-base">
-                        {project.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-1">
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.tags.map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                      <div className="flex gap-2 mt-auto">
-                        <Button variant="outline" size="sm" className="flex-1" asChild>
-                          <a href={project.github} target="_blank" rel="noopener noreferrer">
-                            <Github className="w-4 h-4 mr-2" />
-                            Code
-                          </a>
-                        </Button>
-                        <Button variant="outline" size="sm" className="flex-1" asChild>
-                          <a href={project.demo} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            Demo
-                          </a>
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+        {/* Experience */}
+        <section id="experience" className="border-t bg-muted/40 py-24">
+          <div className="mx-auto max-w-6xl px-5">
+            <h2 className="font-display mb-10 text-4xl font-extrabold tracking-tight sm:text-5xl">Experience and education</h2>
+            <ol className="border-l-2 border-border">
+              {experiences.map((e, i) => (
+                <li key={e.title + e.period} className="relative pb-10 pl-8 last:pb-0">
+                  <span className={`absolute -left-[7px] top-1.5 h-3 w-3 rounded-full ${i < 2 ? 'bg-primary' : 'bg-border'}`} aria-hidden="true" />
+                  <p className="text-sm font-medium text-primary">{e.period}</p>
+                  <h3 className="font-display text-xl font-bold">{e.title}, <span className="font-semibold text-muted-foreground">{e.place}</span></h3>
+                  <p className="mt-1 max-w-2xl text-muted-foreground">{e.text}</p>
+                </li>
               ))}
-            </motion.div>
+            </ol>
           </div>
         </section>
 
-        {/* Experience Section */}
-        <section id="experience" className="py-20 px-4 bg-muted/30">
-          <div className="container mx-auto max-w-4xl">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-16"
-            >
-              <Badge variant="outline" className="mb-4">Journey</Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Experience & Education</h2>
-            </motion.div>
-
-            <motion.div
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="space-y-6"
-            >
-              {experiences.map((exp, index) => (
-                <motion.div
-                  key={exp.title}
-                  variants={fadeInUp}
-                  transition={{ delay: index * 0.15 }}
-                >
-                  <Card className="border-2 hover:border-primary/50 transition-all">
-                    <CardContent className="p-6">
-                      <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                          {exp.icon}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-                            <h3 className="text-xl font-bold">{exp.title}</h3>
-                            <Badge variant="secondary">{exp.period}</Badge>
-                          </div>
-                          <p className="text-primary font-medium mb-2">{exp.company}</p>
-                          <p className="text-muted-foreground">{exp.description}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Contact Section */}
-        <section id="contact" className="py-20 px-4">
-          <div className="container mx-auto max-w-4xl">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-16"
-            >
-              <Badge variant="outline" className="mb-4">Contact</Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Let's Connect</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Interested in collaborating or have a question? Feel free to reach out!
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <Card className="border-2 max-w-2xl mx-auto">
-                <CardHeader>
-                  <CardTitle>Send a Message</CardTitle>
-                  <CardDescription>
-                    Fill out the form below and I'll get back to you as soon as possible.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label htmlFor="name" className="text-sm font-medium">
-                          Name
-                        </label>
-                        <Input id="name" placeholder="Your name" required />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="email" className="text-sm font-medium">
-                          Email
-                        </label>
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="your@email.com"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="subject" className="text-sm font-medium">
-                        Subject
-                      </label>
-                      <Input id="subject" placeholder="What's this about?" required />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="message" className="text-sm font-medium">
-                        Message
-                      </label>
-                      <Textarea
-                        id="message"
-                        placeholder="Your message..."
-                        rows={6}
-                        required
-                      />
-                    </div>
-                    <Button type="submit" className="w-full" size="lg">
-                      <Send className="w-4 h-4 mr-2" />
-                      Send Message
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-12 flex justify-center gap-6"
-            >
-              <Button variant="outline" size="lg" className="gap-2" asChild>
-                <a href="https://github.com/M0hammad-yasin">
-                  <Github className="w-5 h-5" />
-                  GitHub
-                </a>
-              </Button>
-              <Button variant="outline" size="lg" className="gap-2" asChild>
-                <a href="https://www.linkedin.com/in/muhammad-yasin-379059268/">
-                  <Linkedin className="w-5 h-5" />
-                  LinkedIn
-                </a>
-              </Button>
-              <Button variant="outline" size="lg" className="gap-2" asChild>
-                <a href="mailto:mohdysn111@gmail.com">
-                  <Mail className="w-5 h-5" />
-                  Email
-                </a>
-              </Button>
-            </motion.div>
+        {/* Contact */}
+        <section id="contact" className="mx-auto max-w-6xl px-5 py-24">
+          <div className="grid gap-12 lg:grid-cols-2">
+            <div>
+              <h2 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">Tell me what you need built.</h2>
+              <p className="mt-4 max-w-md text-muted-foreground">Send a few lines about your project. I reply with questions or a rough estimate.</p>
+              <div className="mt-8 space-y-3">
+                <a href="mailto:mohdysn111@gmail.com" className="flex items-center gap-3 hover:text-primary"><Mail className="h-5 w-5" />mohdysn111@gmail.com</a>
+                <a href="https://www.linkedin.com/in/muhammad-yasin-379059268/" className="flex items-center gap-3 hover:text-primary"><Linkedin className="h-5 w-5" />LinkedIn</a>
+                <a href="https://github.com/M0hammad-yasin" className="flex items-center gap-3 hover:text-primary"><Github className="h-5 w-5" />GitHub</a>
+              </div>
+            </div>
+            <form onSubmit={submit} className="space-y-4 rounded-xl border bg-card p-6">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2"><label htmlFor="name" className="text-sm font-medium">Name</label><Input id="name" name="name" required /></div>
+                <div className="space-y-2"><label htmlFor="email" className="text-sm font-medium">Email</label><Input id="email" name="email" type="email" required /></div>
+              </div>
+              <div className="space-y-2"><label htmlFor="subject" className="text-sm font-medium">What do you need?</label><Input id="subject" name="subject" placeholder="New website, redesign, web app..." required /></div>
+              <div className="space-y-2"><label htmlFor="message" className="text-sm font-medium">Details</label><Textarea id="message" name="message" rows={5} required /></div>
+              <Button type="submit" size="lg" className="w-full"><Send className="mr-2 h-4 w-4" />Send message</Button>
+            </form>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-muted/30">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Code2 className="w-5 h-5 text-primary" />
-              <span className="font-semibold">Muhammad Yasin</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Muhammad Yasin. All rights reserved.
-            </p>
-            <div className="flex gap-4">
-              <Button variant="ghost" size="icon" asChild>
-                <a href="https://github.com/M0hammad-yasin" aria-label="GitHub">
-                  <Github className="w-4 h-4" />
-                </a>
-              </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <a href="https://www.linkedin.com/in/muhammad-yasin-379059268/" aria-label="LinkedIn">
-                  <Linkedin className="w-4 h-4" />
-                </a>
-              </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <a href="mailto:mohdysn111@gmail.com" aria-label="Email">
-                  <Mail className="w-4 h-4" />
-                </a>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <footer className="border-t py-8 text-center text-sm text-muted-foreground">© 2026 Muhammad Yasin</footer>
     </div>
   )
 }
