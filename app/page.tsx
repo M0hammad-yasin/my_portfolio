@@ -181,10 +181,10 @@ const skills = [
 
 const experiences = [
   // TODO: replace the company and description with your real details for these two periods
-  { period: 'Apr 2026 - Present', title: 'Web Developer', place: 'Client projects', text: 'Design, build and maintain websites for clients in New York, Vancouver and Oslo, from first layout to deployment.' },
-  { period: 'Nov 2025 - Apr 2026', title: 'Web Developer', place: 'Client projects', text: 'Started professional web development, building PHP and frontend sites for businesses.' },
+  { period: 'Apr 2026 - Present', title: 'Full Stack Developer', place: 'XTechra', text: 'Design, build and maintain websites for clients in New York, Vancouver and Oslo, from first layout to deployment.' },
+  { period: 'Nov 2025 - Apr 2026', title: 'Full Stack Developer', place: 'K2 Peak', text: 'Started professional web development, building PHP and frontend sites for businesses.' },
   { period: '2025', title: 'Junior Developer Intern', place: 'DevSin', text: 'Contributed to multiple projects and gained hands-on full-stack experience.' },
-  { period: '2023 - Present', title: 'Full-Stack Developer', place: 'Fiverr', text: 'Fixed and maintained MERN applications, debugged APIs and improved performance.' },
+  { period: '2023 - Present', title: 'Full-Stack Developer', place: 'Freelance', text: 'Fixed and maintained MERN applications, debugged APIs and improved performance.' },
   { period: '2020 - 2024', title: 'BS Computer Science', place: 'UIIT', text: 'Software engineering, algorithms and cybersecurity. Final-year IoT project placed 1st among 300+ students.' },
 ]
 
